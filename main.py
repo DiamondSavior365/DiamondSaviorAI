@@ -116,9 +116,11 @@ async def image_page(request: Request):
 async def create_image(request: Request, user_input: Annotated[str, Form()]):
 
     response = openai.images.generate(
+        model="dall-e-3",
         prompt=user_input,
         n=1,
-        size="512x512"
+        size="1024x1024", # size="512x512" not allowed in dall-e-3
+
     )
 
     image_url = response.data[0].url
