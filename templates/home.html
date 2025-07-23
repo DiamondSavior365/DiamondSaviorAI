@@ -1,0 +1,119 @@
+{% include 'layout.html' %}
+
+<!-- Using extends above may be a better fit when we want proper layout inheritance-->
+<!--extends 'layout.html' -->
+
+<div class="container mt-5">
+    <h3 style="color: white;">
+        💬 Start chatting with DiamondSavior — your personal AI assistant.
+    </h3>
+
+
+    <div>
+        <div class="card text-center mt-3">
+            <div class="card-header">
+                Chat History:
+            </div>
+            <div class="card-body chat-history" id="chatHistory">
+                <!-- auto populate here -->
+                {% for response in chat_responses %}
+                <div class="{{ 'chat-message user-input' if loop.index0 is even else 'chat-message ai-response'}}">
+                    {{ response }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="container" id="footer">
+        <div class="input-group mb-3">
+            <input class="form-control" placeholder="Add input here" id="userInput">
+            <button class="btn btn-outline-primary" type="button" id="sendButton">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var websocketString = '';
+    if(window.location.hostname === '127.0.0.1'){
+        websocketString = "ws://localhost:8000/ws"
+    } else{
+        websocketString = `wss://${window.location.hostname}/ws`
+    }
+
+    var ws = new WebSocket(websocketString); // Opens WebSocket connection to local server
+
+    var sendButton = document.getElementById("sendButton"); // Button for sending messages
+    var userInput = document.getElementById("userInput"); // Text input from user
+    var chatHistory = document.getElementById("chatHistory"); // Container for all chat messages
+    var lastUserMessageDiv = null; // Keeps track of the last AI message div element
+    var isNewUserInput = true; // Flag to track if the incoming message is part of new user input or continuation
+
+ws.onmessage = function(event) {
+    var message = event.data; // The incoming message from the server
+
+    if (lastUserMessageDiv && !isNewUserInput) { // Append to the last AI message div intelligently
+        var lastChar = lastUserMessageDiv.textContent.slice(-1); // Last char of existing text
+        var shouldAddSpace = true; // Decide if we need to prepend a space before appending new message
+        var noPrependSpaceChars = [',', '.', '!', '?', ';', ':', "'", '-']; // punctuation not needing space before it
+
+        var firstChar = message.charAt(0); // First char of new message piece
+
+        // Detect if last and first char are both letters and new message doesn't start with space
+        var isMidWord =
+            /[a-zA-Z]/.test(lastChar) &&
+            /[a-zA-Z]/.test(firstChar) &&
+            !message.startsWith(" ");
+
+        // Don't add space if:
+        // - new message starts with punctuation that shouldn't have space before it
+        // - last char is a hyphen or space
+        // - the new message is a continuation of a word (mid-word)
+        if (
+            noPrependSpaceChars.includes(firstChar) ||
+            lastChar === '-' ||
+            lastChar === ' ' ||
+            isMidWord
+        ) {
+            shouldAddSpace = false;
+        }
+
+        lastUserMessageDiv.textContent += (shouldAddSpace ? " " : "") + message;
+    } else { // Create a new div for this message and add it to chatHistory
+        var messageDiv = document.createElement("div");
+        messageDiv.className = "chat-message ai-response";
+        messageDiv.textContent = message;
+        chatHistory.appendChild(messageDiv);
+        lastUserMessageDiv = messageDiv;
+        isNewUserInput = false;
+    }
+};
+
+    sendButton.onclick = function(){
+        var message = userInput.value.trim();
+        if(message){
+            var userInputDiv = document.createElement("div");
+            userInputDiv.className = "chat-message user-input" // User user-input class for..
+            userInputDiv.textContent = message;
+            chatHistory.appendChild(userInputDiv);
+
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            ws.send(message);
+            userInput.value = "";
+            isNewUserInput = true; //Set the flag as it's a new user input
+            lastUserMessageDiv = null; // Prepare for the next message
+        }
+    };
+
+</script>
+
+<script>
+  document.body.style.backgroundImage = "url('/static/images/background_4.jpeg')";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+  document.body.style.backgroundRepeat = "no-repeat";
+  document.body.style.backgroundAttachment = "fixed";
+  document.body.style.minHeight = "100vh";
+  document.body.style.fontFamily = "Arial, sans-serif";
+</script>

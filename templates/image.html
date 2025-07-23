@@ -1,0 +1,110 @@
+{% include 'layout.html' %}
+
+<div class="container mt-5">
+    <h3 style="color: white;">
+        🖼️ Add input to generate images with DiamondSavior — your personal AI assistant.
+    </h3>
+
+
+     <div>
+    <div class="card text-center mt-3">
+      <div class="card-header">
+        Image Generation
+      </div>
+      <div class="card-body">
+        <!-- ✅ Image + Loading Overlay Here -->
+        <div id="image-container" class="position-relative">
+          <div id="loading-overlay" style="display: none;">
+            <p style="color: white;">🧠 Generating image...</p>
+            <div class="spinner-border text-light" role="status"></div>
+          </div>
+
+          {% if image_url %}
+          <img id="generated-image" src="{{ image_url }}" alt="Generated image" style="display: none;" onload="showImage()" />
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+    <form class="container" id="footer" action="/image" method="POST">
+        <div class="input-group mb-3">
+
+                <input class="form-control" placeholder="Add input here" name="user_input" >
+
+            <button class="btn btn-outline-primary" type="submit">Send</button>
+        </div>
+    </form>
+</div>
+<script>
+  document.body.style.backgroundImage = "url('/static/images/background_1.jpeg')";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+  document.body.style.backgroundRepeat = "no-repeat";
+  document.body.style.backgroundAttachment = "fixed";
+  document.body.style.minHeight = "100vh";
+  document.body.style.fontFamily = "Arial, sans-serif";
+</script>
+
+<!-- ✅ Styles -->
+<style>
+
+  #image-container {
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+  }
+
+  #generated-image {
+    max-width: 100%;
+    height: auto;
+    z-index: 1;
+  }
+</style>
+
+<!-- ✅ Script -->
+<script>
+  const loadingOverlay = document.getElementById('loading-overlay');
+  const generatedImage = document.getElementById('generated-image');
+
+  function showImage() {
+    loadingOverlay.style.display = 'none';
+    generatedImage.style.display = 'block';
+  }
+
+  // If there's an image, show the overlay immediately
+  if ("{{ image_url }}") {
+    loadingOverlay.style.display = 'flex';
+  }
+
+  // ✅ NEW: Show overlay immediately on form submission
+  document.querySelector('form').addEventListener('submit', function () {
+    if (loadingOverlay) {
+      loadingOverlay.style.display = 'flex';
+    }
+  });
+
+  // Background settings
+  document.body.style.backgroundImage = "url('/static/images/background_4.jpeg')";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+  document.body.style.backgroundRepeat = "no-repeat";
+  document.body.style.backgroundAttachment = "fixed";
+  document.body.style.minHeight = "100vh";
+  document.body.style.fontFamily = "Arial, sans-serif";
+</script>
