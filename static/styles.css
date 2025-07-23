@@ -1,0 +1,26 @@
+.custom-black-bg {
+  background-color: #000000; !important
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    text-shadow:
+      0 0 1px rgba(255, 215, 0, 0.15),
+      0 0 3px rgba(255, 199, 0, 0.15),
+      0 0 5px rgba(255, 183, 0, 0.15),
+      0 0 7px rgba(255, 167, 0, 0.15);
+  }
+  50% {
+    text-shadow:
+      0 0 6px #FFD700,
+      0 0 10px #FFC700,
+      0 0 13px #FFB700,
+      0 0 15px #FFA700;
+  }
+}
+
+.brand-name {
+  font-weight: 800;
+  color: white;
+  animation: glowPulse 4.5s ease-in-out infinite;
+}

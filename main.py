@@ -15,7 +15,7 @@ openai = OpenAI(
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="env/static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 chat_responses = [] #used for history in web application
 
