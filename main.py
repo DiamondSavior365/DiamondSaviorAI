@@ -113,15 +113,19 @@ async def image_page(request: Request):
 
 @app.post("/image", response_class=HTMLResponse)
 async def create_image(request: Request, user_input: Annotated[str, Form()]):
+
+    print("STARTING IMAGE GENERATION")
+
     response = openai.images.generate(
-        model="gpt-image-2.5-flare",
+        model="gpt-image-2.5-sunburst",
         prompt=user_input,
         n=1,
         size="1024x1024",
     )
 
-    image_base64 = response.data[0].b64_json
+    print("IMAGE GENERATION FINISHED")
 
+    image_base64 = response.data[0].b64_json
     image_url = f"data:image/png;base64,{image_base64}"
 
     return templates.TemplateResponse(
