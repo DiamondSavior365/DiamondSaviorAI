@@ -114,7 +114,7 @@ async def image_page(request: Request):
 async def create_image(request: Request, user_input: Annotated[str, Form()]):
 
     response = openai.images.generate(
-        model="gpt-image-2.5-sunburst",
+        model="gpt-image-2.5-flare",
         prompt=user_input,
         n=1,
         size="1024x1024", # size="512x512" not allowed in dall-e-3
